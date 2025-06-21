@@ -31,3 +31,14 @@ build/
 
 ### VS Code ###
 .vscode/
+
+# Base de datos H2 persistente (evita errores de permisos y archivos binarios innecesarios)
+data/
+*.mv.db
+*.trace.db
+*.h2.db
+
+# Archivos generados de compilación y temporales adicionales
+*.log
+*.tmp
+*.bak

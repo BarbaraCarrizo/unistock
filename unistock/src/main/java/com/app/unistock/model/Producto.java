@@ -3,6 +3,8 @@ package com.app.unistock.model;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 @Entity
 @Table(name = "productos")
 public class Producto {
@@ -21,6 +23,7 @@ public class Producto {
 
     @ManyToOne
     @JoinColumn(name = "categoria_id")
+    @JsonBackReference
     private Categoria categoria;
 
     // Constructor vacío requerido por JPA

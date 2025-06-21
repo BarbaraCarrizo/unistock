@@ -11,6 +11,7 @@
 	<groupId>com.app</groupId>
 	<artifactId>unistock</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
+	<packaging>jar</packaging>
 	<name>unistock</name>
 	<description>Sistema de inventario o control de stock</description>
 	<url/>
