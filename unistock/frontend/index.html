@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Unistock - Movimientos</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header>
+    <div class="brand-title">Unistock</div>
+    <button class="logout-btn">Cerrar sesión</button>
+  </header>
+
+  <div class="container">
+    <h2>Registrar Movimiento de Stock</h2>
+
+    <label for="tipoMovimiento">Tipo de Movimiento:</label>
+    <select id="tipoMovimiento">
+      <option value="Ingreso">Alta (Ingreso)</option>
+      <option value="Baja">Baja (Salida)</option>
+    </select>
+
+    <form id="form-movimiento">
+      <select id="categoriaSelect" required>
+        <option value="">Seleccionar Categoría</option>
+        <!-- Se llenará con JS -->
+      </select>
+
+      <select id="productoSelect" required disabled>
+        <option value="">Seleccionar Producto</option>
+        <!-- Se llenará con JS -->
+      </select>
+
+      <input type="number" id="cantidadInput" placeholder="Cantidad" required />
+
+      <input type="text" id="motivoInput" placeholder="Motivo de baja" style="display: none;" />
+
+      <button type="button" id="agregarBtn">Agregar al listado</button>
+    </form>
+
+    <div class="section-header">
+    <h3>Productos a registrar (<span id="contador">0</span>)</h3>
+    </div>
+
+    <table id="tablaListado">
+      <thead>
+        <tr>
+          <th>Categoría</th>
+          <th>Producto</th>
+          <th>Cantidad</th>
+          <th>Motivo</th>
+          <th>Acción</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+
+    <button id="registrarTodoBtn">Registrar Movimiento</button>
+  </div>
+
+<section id="historialMovimientos" style="margin-top: 3rem;">
+  <h3>Detalle de movimientos registrados</h3>
+  <table>
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Fecha</th>
+        <th>Tipo</th>
+        <th>Acción</th>
+      </tr>
+    </thead>
+    <tbody id="tablaHistorialBody"></tbody>
+  </table>
+</section>
+
+<div id="modalDetalle" class="modal">
+  <div class="modal-contenido">
+    <span class="cerrar" id="cerrarModal">&times;</span>
+    <h3>Detalle del Movimiento</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>Fecha</th>
+          <th>Tipo</th>
+          <th>Categoría</th>
+          <th>Producto</th>
+          <th>Cantidad</th>
+          <th>Motivo</th>
+        </tr>
+      </thead>
+      <tbody id="modalDetalleBody"></tbody>
+    </table>
+  </div>
+</div>
+
+
+
+  <script src="script.js"></script>
+</body>
+</html>
+
