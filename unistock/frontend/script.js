@@ -2,6 +2,56 @@ let movimientos = [];
 let movimientosRegistrados = [];
 
 document.addEventListener("DOMContentLoaded", async () => {
+
+    // 1) Elementos de login vs app
+  const loginView = document.getElementById("loginView");
+  const appView   = document.getElementById("appView");
+  const header    = document.getElementById("mainHeader");
+  const logoutBtn = document.querySelector(".logout-btn");
+
+  // 2) Funciones para mostrar/ocultar vistas
+  const showLogin = () => {
+    loginView.style.display = "block";
+    appView  .style.display = "none";
+    header   .style.display = "none";
+    document.getElementById("mensajeLogin").style.display = "none";
+  };
+  const showApp = () => {
+    loginView.style.display = "none";
+    appView  .style.display = "block";
+    header   .style.display = "flex";
+  };
+
+  // 3) Restaurar sesión al cargar la página
+  if (localStorage.getItem("loggedIn") === "true") {
+    showApp();
+  } else {
+    showLogin();
+  }
+
+  // 4) Lógica de login
+  document.getElementById("loginForm").addEventListener("submit", e => {
+    e.preventDefault();
+    const u = document.getElementById("usuario").value.trim();
+    const p = document.getElementById("contrasena").value.trim();
+    const msg = document.getElementById("mensajeLogin");
+
+    if (u === "admin" && p === "admin123") {
+      localStorage.setItem("loggedIn", "true");
+      showApp();
+    } else {
+      msg.textContent = "Usuario o contraseña incorrectos.";
+      msg.style.display = "block";
+    }
+  });
+
+  // 5) Lógica de logout
+  logoutBtn.addEventListener("click", () => {
+    localStorage.removeItem("loggedIn");
+    showLogin();
+  });
+
+
   const categoriaSelect = document.getElementById("categoriaSelect");
   const productoSelect = document.getElementById("productoSelect");
   const tipoMovimiento = document.getElementById("tipoMovimiento");
@@ -139,7 +189,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   };
 
   const agregarMovimientoRegistrado = (listaMovimientos, tipo) => {
-    const fecha = new Date().toLocaleString();
+    const fecha = new Date().toLocaleDateString();
     const numeroMovimiento = movimientosRegistrados.length + 1;
 
     movimientosRegistrados.push({
@@ -154,7 +204,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       <td>${numeroMovimiento}</td>
       <td>${fecha}</td>
       <td>${tipo}</td>
-      <td><button onclick="verDetalles(${numeroMovimiento - 1})">Ver detalles</button></td>
+      <td><button onclick="verDetalles(${numeroMovimiento - 1})">Ver</button></td>
     `;
 
     cuerpoMovimientosRegistrados.appendChild(tr);
@@ -236,4 +286,8 @@ window.addEventListener("click", (event) => {
 
   cargarCategorias();
 });
+
+
+
+
 

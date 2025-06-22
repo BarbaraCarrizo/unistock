@@ -1,16 +1,36 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <title>Unistock - Movimientos</title>
-  <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="style.css" />
+<meta charset="UTF-8" />
+<title>Unistock - Movimientos</title>
+<link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <header>
+
+
+  <!-- VISTA LOGIN -->
+  <div id="loginView">
+    <div class="login-container">
+    <h1 class="proyecto-nombre">Unistock</h1>
+      <h2>Iniciar Sesión</h2>
+      <form id="loginForm">
+        <input type="text" id="usuario" placeholder="Usuario" required />
+        <input type="password" id="contrasena" placeholder="Contraseña" required />
+        <button type="submit">Ingresar</button>
+      </form>
+      <p id="mensajeLogin" class="error-msg"></p>
+    </div>
+  </div>
+
+  <!-- HEADER + APP (inicialmente oculto) -->
+  <header id="mainHeader" style="display: none;">
     <div class="brand-title">Unistock</div>
     <button class="logout-btn">Cerrar sesión</button>
   </header>
+
+<!-- Vista de Aplicación -->
+<div id="appView" style="display: none;">
 
   <div class="container">
     <h2>Registrar Movimiento de Stock</h2>
@@ -59,15 +79,16 @@
     <button id="registrarTodoBtn">Registrar Movimiento</button>
   </div>
 
+
 <section id="historialMovimientos" style="margin-top: 3rem;">
   <h3>Detalle de movimientos registrados</h3>
   <table>
     <thead>
       <tr>
-        <th>#</th>
+        <th>Numero</th>
         <th>Fecha</th>
         <th>Tipo</th>
-        <th>Acción</th>
+        <th>Detalles</th>
       </tr>
     </thead>
     <tbody id="tablaHistorialBody"></tbody>
@@ -93,8 +114,7 @@
     </table>
   </div>
 </div>
-
-
+</div>
 
   <script src="script.js"></script>
 </body>
