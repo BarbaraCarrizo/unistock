@@ -11,3 +11,7 @@ INSERT INTO movimientos_inventario (producto_id, fecha_movimiento, tipo, cantida
 (1, CURRENT_TIMESTAMP(), 'ENTRADA', 10, 'Stock inicial'),
 (2, CURRENT_TIMESTAMP(), 'ENTRADA', 25, 'Compra mayorista'),
 (3, CURRENT_TIMESTAMP(), 'ENTRADA', 50, 'Stock inicial yerba');
+
+INSERT INTO usuario (nombre, contrasena, rol) VALUES
+('admin', 'admin123', 'ADMIN'),
+('usuario', 'usuario123', 'USER');
