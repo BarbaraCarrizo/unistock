@@ -5,7 +5,9 @@ import com.app.unistock.service.MovimientoInventarioService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/movimientos")
@@ -26,8 +28,15 @@ public class MovimientoInventarioController {
     }
 
     @PostMapping
-    public MovimientoInventario crearMovimiento(@RequestBody MovimientoInventario movimiento) {
-        return movimientoService.guardarMovimiento(movimiento);
+    public Map<String, Object> crearMovimiento(@RequestBody MovimientoInventario movimiento) {
+        MovimientoInventario movGuardado = movimientoService.guardarMovimiento(movimiento);
+        Map<String, Object> response = new HashMap<>();
+        response.put("movimiento", movGuardado);
+        if (movGuardado.getProducto() != null) {
+            response.put("stockActualizado", movGuardado.getProducto().getStock());
+            response.put("productoNombre", movGuardado.getProducto().getNombre());
+        }
+        return response;
     }
 
     @PutMapping("/{id}")

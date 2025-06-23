@@ -1,2 +1,18 @@
 mvn clean package
 mvn spring-boot:run
+
+# PASOS PARA LEVANTAR EL PROYECTO UNISTOCK
+
+1. Instala las dependencias de Node en la carpeta frontend (solo la primera vez):
+   cd frontend
+   npm install
+
+2. Cada vez que quieras levantar el backend y ver el frontend actualizado:
+   npm run copy-static
+   cd ../backend
+   mvn spring-boot:run
+
+# OPCIONAL: Automatiza todo con un solo comando desde la raíz del proyecto
+# (requiere tener Node y npm instalados)
+
+npm run dev

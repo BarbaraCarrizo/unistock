@@ -5,6 +5,8 @@
 <title>Unistock - Movimientos</title>
 <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet" />
 <link rel="stylesheet" href="./style.css" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 <body>
 
@@ -29,91 +31,121 @@
     <button class="logout-btn">Cerrar sesión</button>
   </header>
 
+  <!-- NAVBAR PRINCIPAL -->
+  <nav id="mainNav">
+    <ul class="nav-list">
+      <li><a href="#" id="navUsuarios">Usuarios</a></li>
+      <li><a href="#" id="navProductos">Productos</a></li>
+      <li><a href="#" id="navCategorias">Categorías</a></li>
+      <li><a href="#" id="navMovimientos">Movimientos</a></li>
+    </ul>
+  </nav>
+
 <!-- Vista de Aplicación -->
 <div id="appView" style="display: none;">
 
-  <div class="container">
-    <h2>Registrar Movimiento de Stock</h2>
+  <!-- SECCION USUARIOS CRUD -->
+  <section id="usuariosSection" style="display:none;">
+    <h2>Gestión de Usuarios</h2>
+    <div id="usuariosCrudContainer"></div>
+  </section>
 
-    <label for="tipoMovimiento">Tipo de Movimiento:</label>
-    <select id="tipoMovimiento">
-      <option value="Ingreso">Alta (Ingreso)</option>
-      <option value="Baja">Baja (Salida)</option>
-    </select>
+  <!-- SECCION PRODUCTOS CRUD -->
+  <section id="productosSection" style="display:none;">
+    <h2>Gestión de Productos</h2>
+    <div id="productosCrudContainer"></div>
+  </section>
 
-    <form id="form-movimiento">
-      <select id="categoriaSelect" required>
-        <option value="">Seleccionar Categoría</option>
-        <!-- Se llenará con JS -->
+  <!-- SECCION CATEGORIAS CRUD -->
+  <section id="categoriasSection" style="display:none;">
+    <h2>Gestión de Categorías</h2>
+    <div id="categoriasCrudContainer"></div>
+  </section>
+
+  <!-- SECCION MOVIMIENTOS (la original) -->
+  <section id="movimientosSection">
+    <div class="container">
+      <h2>Registrar Movimiento de Stock</h2>
+
+      <label for="tipoMovimiento">Tipo de Movimiento:</label>
+      <select id="tipoMovimiento">
+        <option value="Ingreso">Alta (Ingreso)</option>
+        <option value="Baja">Baja (Salida)</option>
       </select>
 
-      <select id="productoSelect" required disabled>
-        <option value="">Seleccionar Producto</option>
-        <!-- Se llenará con JS -->
-      </select>
+      <form id="form-movimiento">
+        <select id="categoriaSelect" required>
+          <option value="">Seleccionar Categoría</option>
+          <!-- Se llenará con JS -->
+        </select>
 
-      <input type="number" id="cantidadInput" placeholder="Cantidad" required />
+        <select id="productoSelect" required disabled>
+          <option value="">Seleccionar Producto</option>
+          <!-- Se llenará con JS -->
+        </select>
 
-      <input type="text" id="motivoInput" placeholder="Motivo de baja" style="display: none;" />
+        <input type="number" id="cantidadInput" placeholder="Cantidad" required />
 
-      <button type="button" id="agregarBtn">Agregar al listado</button>
-    </form>
+        <input type="text" id="motivoInput" placeholder="Motivo de baja" style="display: none;" />
 
-    <div class="section-header">
-    <h3>Productos a registrar (<span id="contador">0</span>)</h3>
+        <button type="button" id="agregarBtn">Agregar al listado</button>
+      </form>
+
+      <div class="section-header">
+      <h3>Productos a registrar (<span id="contador">0</span>)</h3>
+      </div>
+
+      <table id="tablaListado">
+        <thead>
+          <tr>
+            <th>Categoría</th>
+            <th>Producto</th>
+            <th>Cantidad</th>
+            <th>Motivo</th>
+            <th>Acción</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+
+      <button id="registrarTodoBtn">Registrar Movimiento</button>
     </div>
 
-    <table id="tablaListado">
-      <thead>
-        <tr>
-          <th>Categoría</th>
-          <th>Producto</th>
-          <th>Cantidad</th>
-          <th>Motivo</th>
-          <th>Acción</th>
-        </tr>
-      </thead>
-      <tbody></tbody>
-    </table>
 
-    <button id="registrarTodoBtn">Registrar Movimiento</button>
-  </div>
-
-
-<section id="historialMovimientos" style="margin-top: 3rem;">
-  <h3>Detalle de movimientos registrados</h3>
-  <table>
-    <thead>
-      <tr>
-        <th>Numero</th>
-        <th>Fecha</th>
-        <th>Tipo</th>
-        <th>Detalles</th>
-      </tr>
-    </thead>
-    <tbody id="tablaHistorialBody"></tbody>
-  </table>
-</section>
-
-<div id="modalDetalle" class="modal">
-  <div class="modal-contenido">
-    <span class="cerrar" id="cerrarModal">&times;</span>
-    <h3>Detalle del Movimiento</h3>
+  <section id="historialMovimientos" style="margin-top: 3rem;">
+    <h3>Detalle de movimientos registrados</h3>
     <table>
       <thead>
         <tr>
+          <th>Numero</th>
           <th>Fecha</th>
           <th>Tipo</th>
-          <th>Categoría</th>
-          <th>Producto</th>
-          <th>Cantidad</th>
-          <th>Motivo</th>
+          <th>Detalles</th>
         </tr>
       </thead>
-      <tbody id="modalDetalleBody"></tbody>
+      <tbody id="tablaHistorialBody"></tbody>
     </table>
+  </section>
+
+  <div id="modalDetalle" class="modal">
+    <div class="modal-contenido">
+      <span class="cerrar" id="cerrarModal">&times;</span>
+      <h3>Detalle del Movimiento</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Fecha</th>
+            <th>Tipo</th>
+            <th>Categoría</th>
+            <th>Producto</th>
+            <th>Cantidad</th>
+            <th>Motivo</th>
+          </tr>
+        </thead>
+        <tbody id="modalDetalleBody"></tbody>
+      </table>
+    </div>
   </div>
-</div>
 </div>
 
   <script src="./script.js"></script>

@@ -1,0 +1,7 @@
+{
+  "name": "unistock-frontend",
+  "version": "1.0.0",
+  "scripts": {
+    "copy-static": "node copy-to-static.js"
+  }
+}

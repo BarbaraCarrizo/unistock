@@ -1,4 +1,4 @@
-package com.app.unistock.config;
+package main.java.com.app.unistock.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

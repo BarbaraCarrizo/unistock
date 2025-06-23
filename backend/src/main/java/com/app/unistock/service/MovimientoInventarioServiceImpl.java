@@ -1,7 +1,10 @@
 package com.app.unistock.service;
 
 import com.app.unistock.model.MovimientoInventario;
+import com.app.unistock.model.Producto;
+import com.app.unistock.model.TipoMovimiento;
 import com.app.unistock.repository.MovimientoInventarioRepository;
+import com.app.unistock.repository.ProductoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -12,6 +15,8 @@ public class MovimientoInventarioServiceImpl implements MovimientoInventarioServ
 
     @Autowired
     private MovimientoInventarioRepository movimientoInventarioRepository;
+    @Autowired
+    private ProductoRepository productoRepository;
 
     @Override
     public List<MovimientoInventario> listarMovimientos() {
@@ -25,6 +30,16 @@ public class MovimientoInventarioServiceImpl implements MovimientoInventarioServ
 
     @Override
     public MovimientoInventario guardarMovimiento(MovimientoInventario movimiento) {
+        // Actualizar stock del producto
+        Producto producto = productoRepository.findById(movimiento.getProducto().getId()).orElse(null);
+        if (producto != null) {
+            if (movimiento.getTipo() == TipoMovimiento.ENTRADA) {
+                producto.setStock(producto.getStock() + movimiento.getCantidad());
+            } else if (movimiento.getTipo() == TipoMovimiento.SALIDA) {
+                producto.setStock(producto.getStock() - movimiento.getCantidad());
+            }
+            productoRepository.save(producto);
+        }
         return movimientoInventarioRepository.save(movimiento);
     }
 

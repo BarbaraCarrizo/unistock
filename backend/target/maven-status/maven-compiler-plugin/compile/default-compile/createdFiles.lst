@@ -8,9 +8,10 @@ com\app\unistock\repository\MovimientoInventarioRepository.class
 com\app\unistock\service\UsuarioService.class
 com\app\unistock\controller\ProductoController.class
 com\app\unistock\model\MovimientoInventario.class
+main\java\com\app\unistock\config\CorsConfig$1.class
+main\java\com\app\unistock\config\CorsConfig.class
 com\app\unistock\service\ProductoService.class
 com\app\unistock\service\UsuarioServiceImpl.class
-com\app\unistock\config\CorsConfig.class
 com\app\unistock\service\MovimientoInventarioServiceImpl.class
 com\app\unistock\service\CategoriaServiceImpl.class
 com\app\unistock\controller\UsuarioController.class
@@ -21,5 +22,4 @@ com\app\unistock\model\Categoria.class
 com\app\unistock\model\TipoMovimiento.class
 com\app\unistock\repository\UsuarioRepository.class
 com\app\unistock\model\Producto.class
-com\app\unistock\config\CorsConfig$1.class
 com\app\unistock\repository\ProductoRepository.class

@@ -5,6 +5,8 @@ import com.app.unistock.repository.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class UsuarioServiceImpl implements UsuarioService {
     @Autowired
@@ -22,5 +24,27 @@ public class UsuarioServiceImpl implements UsuarioService {
             return usuario;
         }
         return null;
+    }
+
+    @Override
+    public List<Usuario> listarUsuarios() {
+        return usuarioRepository.findAll();
+    }
+
+    @Override
+    public Usuario actualizarUsuario(Long id, Usuario usuario) {
+        Usuario existente = usuarioRepository.findById(id).orElse(null);
+        if (existente != null) {
+            existente.setNombre(usuario.getNombre());
+            existente.setContrasena(usuario.getContrasena());
+            // Agregar otros campos si existen
+            return usuarioRepository.save(existente);
+        }
+        return null;
+    }
+
+    @Override
+    public void eliminarUsuario(Long id) {
+        usuarioRepository.deleteById(id);
     }
 }
