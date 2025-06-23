@@ -34,6 +34,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     mainNav.style.display = "block";
     mostrarSeccion(movimientosSection);
     navMovimientos.classList.add('active');
+    cargarCategoriasParaMovimientos();
     cargarMovimientosRegistrados();
   };
 
@@ -111,6 +112,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     e.preventDefault();
     mostrarSeccion(movimientosSection);
     navMovimientos.classList.add('active');
+    cargarCategoriasParaMovimientos();
     cargarMovimientosRegistrados();
   });
 
@@ -472,6 +474,53 @@ document.addEventListener("DOMContentLoaded", async () => {
     document.getElementById('categoriaNombre').value = '';
     document.getElementById('cancelarEdicionCategoria').style.display = 'none';
   }
+
+  // --- CATEGORÍAS Y PRODUCTOS PARA FORMULARIO DE MOVIMIENTOS ---
+  async function cargarCategoriasParaMovimientos() {
+    try {
+      const response = await fetch("http://localhost:8081/api/categorias");
+      const categorias = await response.json();
+      const categoriaSelect = document.getElementById("categoriaSelect");
+      categoriaSelect.innerHTML = `<option value="">Seleccionar Categoría</option>`;
+      categorias.forEach(c => {
+        const option = document.createElement("option");
+        option.value = c.id;
+        option.textContent = c.nombre;
+        categoriaSelect.appendChild(option);
+      });
+      // Limpia productos
+      const productoSelect = document.getElementById("productoSelect");
+      productoSelect.innerHTML = `<option value="">Seleccionar Producto</option>`;
+      productoSelect.disabled = true;
+    } catch (error) {
+      console.error("Error al cargar categorías para movimientos:", error);
+    }
+  }
+
+  document.getElementById("categoriaSelect").addEventListener("change", async function() {
+    const idCat = this.value;
+    const productoSelect = document.getElementById("productoSelect");
+    productoSelect.disabled = true;
+    productoSelect.innerHTML = `<option value="">Cargando productos...</option>`;
+    try {
+      const response = await fetch("http://localhost:8081/api/categorias/" + idCat);
+      if (!response.ok) throw new Error();
+      const categoria = await response.json();
+      productoSelect.innerHTML = `<option value="">Seleccionar Producto</option>`;
+      if (categoria && categoria.productos) {
+        categoria.productos.forEach(p => {
+          const option = document.createElement("option");
+          option.value = p.id;
+          option.textContent = p.nombre;
+          productoSelect.appendChild(option);
+        });
+        productoSelect.disabled = false;
+      }
+    } catch (error) {
+      productoSelect.innerHTML = `<option value="">Error al cargar productos</option>`;
+      console.error("Error al cargar productos:", error);
+    }
+  });
 
 });
 
