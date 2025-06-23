@@ -116,7 +116,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     cargarMovimientosRegistrados();
   });
 
-  // Cargar movimientos registrados desde la API y llenar la grilla
+  // --- AJUSTE EN LA GRILLA DE MOVIMIENTOS REGISTRADOS ---
   async function cargarMovimientosRegistrados() {
     const cuerpo = document.getElementById("tablaHistorialBody");
     cuerpo.innerHTML = '<tr><td colspan="4">Cargando movimientos...</td></tr>';
@@ -133,7 +133,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         const tr = document.createElement("tr");
         tr.innerHTML = `
           <td>${m.id || idx + 1}</td>
-          <td>${m.fecha ? new Date(m.fecha).toLocaleString() : ''}</td>
+          <td>${m.fechaMovimiento ? new Date(m.fechaMovimiento).toLocaleString() : ''}</td>
           <td>${m.tipo || ''}</td>
           <td><button onclick="verDetallesMovimiento(${m.id})">Ver</button></td>
         `;
@@ -154,7 +154,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       detalleBody.innerHTML = '';
       const fila = document.createElement("tr");
       fila.innerHTML = `
-        <td>${m.fecha ? new Date(m.fecha).toLocaleString() : ''}</td>
+        <td>${m.fechaMovimiento ? new Date(m.fechaMovimiento).toLocaleString() : ''}</td>
         <td>${m.tipo || ''}</td>
         <td>${m.producto && m.producto.categoria ? m.producto.categoria.nombre : ''}</td>
         <td>${m.producto ? m.producto.nombre : ''}</td>
@@ -521,6 +521,157 @@ document.addEventListener("DOMContentLoaded", async () => {
       console.error("Error al cargar productos:", error);
     }
   });
+
+  // --- LÓGICA PARA AGREGAR MOVIMIENTOS PENDIENTES Y REGISTRAR ---
+  const tipoMovimiento = document.getElementById("tipoMovimiento");
+  const motivoInput = document.getElementById("motivoInput");
+  const contador = document.getElementById("contador");
+  const seccionDetalle = document.getElementById("detalleMovimiento");
+
+  // Mostrar/ocultar campo motivo según tipo de movimiento
+  if (tipoMovimiento) {
+    tipoMovimiento.addEventListener("change", () => {
+      if (tipoMovimiento.value === "Baja") {
+        motivoInput.style.display = "block";
+      } else {
+        motivoInput.style.display = "none";
+        motivoInput.value = "";
+      }
+    });
+    // Inicializa visibilidad al cargar
+    if (tipoMovimiento.value === "Baja") {
+      motivoInput.style.display = "block";
+    } else {
+      motivoInput.style.display = "none";
+    }
+  }
+
+  // Botón Agregar
+  if (document.getElementById("agregarBtn")) {
+    document.getElementById("agregarBtn").addEventListener("click", () => {
+      seccionDetalle?.style?.setProperty("display", "none");
+      const categoriaSelect = document.getElementById("categoriaSelect");
+      const productoSelect = document.getElementById("productoSelect");
+      const categoriaId = categoriaSelect.value;
+      const categoriaText = categoriaSelect.options[categoriaSelect.selectedIndex]?.text || '';
+      const productoId = productoSelect.value;
+      const productoText = productoSelect.options[productoSelect.selectedIndex]?.text || '';
+      const cantidad = parseInt(document.getElementById("cantidadInput").value);
+      const motivo = motivoInput.value.trim();
+      if (!categoriaId || !productoId || isNaN(cantidad) || cantidad <= 0) {
+        alert("Completa todos los campos correctamente.");
+        return;
+      }
+      if (tipoMovimiento.value === "Baja" && motivo === "") {
+        alert("Debes especificar un motivo para la baja.");
+        return;
+      }
+      if (movimientos.length === 0) {
+        tipoMovimiento.disabled = true;
+      } else {
+        if (tipoMovimiento.value !== movimientos[0].tipo) {
+          alert("No podés combinar tipos de movimiento en una misma operación.");
+          return;
+        }
+        if (movimientos[0].categoriaId !== categoriaId) {
+          alert("No puedes agregar productos de distintas categorías en un mismo movimiento.");
+          return;
+        }
+      }
+      movimientos.push({
+        tipo: tipoMovimiento.value,
+        categoriaId,
+        categoriaText,
+        productoId,
+        productoText,
+        cantidad,
+        motivo: tipoMovimiento.value === "Baja" ? motivo : "-"
+      });
+      actualizarTablaMovPendientes();
+      limpiarFormularioMovPendiente();
+    });
+  }
+
+  function actualizarTablaMovPendientes() {
+    const tbody = document.querySelector("#tablaListado tbody");
+    if (!tbody) return;
+    tbody.innerHTML = "";
+    movimientos.forEach((m, i) => {
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td>${m.categoriaText}</td>
+        <td>${m.productoText}</td>
+        <td>${m.cantidad}</td>
+        <td>${m.motivo}</td>
+        <td><button onclick="eliminarMovimientoPendiente(${i})">❌</button></td>
+      `;
+      tbody.appendChild(tr);
+    });
+    contador.textContent = movimientos.length;
+  }
+
+  window.eliminarMovimientoPendiente = (index) => {
+    movimientos.splice(index, 1);
+    actualizarTablaMovPendientes();
+    if (movimientos.length === 0) {
+      tipoMovimiento.disabled = false;
+    }
+  };
+
+  function limpiarFormularioMovPendiente() {
+    const productoSelect = document.getElementById("productoSelect");
+    productoSelect.innerHTML = `<option value="">Seleccionar Producto</option>`;
+    productoSelect.disabled = true;
+    document.getElementById("cantidadInput").value = "";
+    motivoInput.value = "";
+  }
+
+  // --- LÓGICA PARA REGISTRAR MOVIMIENTOS EN LA API ---
+  if (document.getElementById("registrarTodoBtn")) {
+    document.getElementById("registrarTodoBtn").addEventListener("click", async () => {
+      if (movimientos.length === 0) {
+        alert("No hay movimientos para registrar.");
+        return;
+      }
+      try {
+        for (const m of movimientos) {
+          // Mapear tipo a enum del backend
+          let tipoEnum = m.tipo === "Ingreso" ? "ENTRADA" : "SALIDA";
+          const response = await fetch("http://localhost:8081/api/movimientos", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              tipo: tipoEnum,
+              cantidad: m.cantidad,
+              observacion: m.motivo,
+              producto: { id: m.productoId }
+            })
+          });
+          if (response.ok) {
+            const data = await response.json();
+            if (data && data.stockActualizado !== undefined && data.productoNombre) {
+              Swal.fire({
+                icon: 'success',
+                title: 'Stock actualizado',
+                text: `Producto: ${data.productoNombre}\nStock actual: ${data.stockActualizado}`,
+                timer: 2500,
+                showConfirmButton: false
+              });
+            }
+          }
+        }
+        Swal.fire('Éxito', 'Movimientos registrados con éxito.', 'success');
+        movimientos.length = 0;
+        actualizarTablaMovPendientes();
+        tipoMovimiento.disabled = false;
+        limpiarFormularioMovPendiente();
+        cargarMovimientosRegistrados();
+      } catch (error) {
+        Swal.fire('Error', 'Error al registrar los movimientos.', 'error');
+        console.error(error);
+      }
+    });
+  }
 
 });
 
